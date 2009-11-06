@@ -119,7 +119,7 @@ class agent(Daemon):
 		# Schedule the checks
 		agentLogger.debug('Scheduling checks every ' + str(agentConfig['checkFreq']) + ' seconds')
 		s = sched.scheduler(time.time, time.sleep)
-		s.enter(agentConfig['checkFreq'], 1, c.doChecks, (s, True, systemStats))
+		c.doChecks(s, True, systemStats)
 		s.run()
 
 # Control of daemon		
