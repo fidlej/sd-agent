@@ -839,8 +839,11 @@ class checks:
 			# Do the request, log any errors
 			response = urllib2.urlopen(request)
 			
+			message = response.read()
+			if message != 'OK':
+				self.checksLogger.warn('doPostBack: response: %r', message)
 			if self.agentConfig['debugMode']:
-				print response.read()
+				print message
 				
 		except urllib2.HTTPError, e:
 			self.checksLogger.error('doPostBack: HTTPError = ' + str(e))
