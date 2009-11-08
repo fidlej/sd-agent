@@ -122,11 +122,28 @@ class agent(Daemon):
 		c.doChecks(s, True, systemStats)
 		s.run()
 
+def _set_syslog_logging():
+	from logging.handlers import SysLogHandler
+	for address in ('/dev/log', '/var/run/log'):
+		if os.path.exists(address):
+			syslog_handler = SysLogHandler(address)
+			break
+	else:
+		syslog_handler = SysLogHandler()
+
+	logger = logging.getLogger()
+	logger.setLevel(logging.WARNING)
+	syslog_handler.setFormatter(logging.Formatter(
+		'sd-agent %(name)s: %(levelname)s: %(message)s'))
+	logger.addHandler(syslog_handler)
+
 # Control of daemon		
 if __name__ == '__main__':	
 	# Logging
 	if agentConfig['debugMode']:
 		logging.basicConfig(filename='/tmp/sd-agent.log', filemode='w', level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+	else:
+		_set_syslog_logging()
 	
 	mainLogger = logging.getLogger('main')		
 	mainLogger.debug('Agent called')
